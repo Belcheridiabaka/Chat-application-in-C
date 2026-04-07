@@ -31,7 +31,7 @@ void *routine_client(){
 
     struct sockaddr_in sockAddress;
     memset(&sockAddress, 0, sizeof(sockAddress));
-    const char *server_IP = "192.168.88.129";
+    const char *server_IP = "0.0.0.0";
         sockAddress.sin_family = AF_INET;
         sockAddress.sin_port = htons(8080);
     if(inet_pton(AF_INET, server_IP, &sockAddress.sin_addr) <= 0){
@@ -77,7 +77,7 @@ void *routine_serveur(void *arg){
         exit(EXIT_FAILURE); 
     }
     if(listen(*socketA, 1) == -1){
-        fprintf(stderr, "Cannot connect listen: %s\n", strerror(errno));
+        fprintf(stderr, "Cannot listen to incoming connection: %s\n", strerror(errno));
         close(*socketA);
         exit(EXIT_FAILURE);   
     }
@@ -94,7 +94,7 @@ void *routine_serveur(void *arg){
         close(*socketA);
         exit(EXIT_FAILURE);    
     }
-    puts("Listenning \n");
+    puts("Listening \n");
     return (void*)socketB;
 }
 
@@ -158,10 +158,6 @@ int main(int argc, char *argv[]){
         fprintf(stderr, "Cannot join thread: %s", strerror(errno));
         exit(EXIT_FAILURE);  
     }
-
-    printf(BLEU"\n %d\n"RESET, *socketClient);
-    printf(ROUGE"\n %d\n"RESET, *socketServeur);
-
 
     //thread in charge of sending data
     if(pthread_create(&sending_data_Client, NULL, &routine_sending_data, socketClient) != 0){
