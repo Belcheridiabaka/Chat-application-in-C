@@ -15,7 +15,7 @@
 #define ROUGE "\033[31m"
 #define RESET "\033[0m"
 
-void *routine_client(){
+void *routine_client(void *arg){
  int *socketA;
     socketA = malloc(sizeof(*socketA));
     if(socketA == NULL){
@@ -83,12 +83,14 @@ void *routine_serveur(void *arg){
     }
     int *socketB;
     socketB = malloc(sizeof(*socketB));
-    if(socketA == NULL){
+    if(socketB == NULL){
         fprintf(stderr, "Cannot allocate memory \n");
         close(*socketA);
         exit(EXIT_FAILURE);
     }
     *socketB = accept(*socketA, (struct sockaddr*)&sockAddress, (socklen_t*)&length);
+    close(*socketA)
+    free(socketA)
     if(*socketB == -1){
         fprintf(stderr, "Cannot accept connections: %s\n", strerror(errno));
         close(*socketA);
@@ -107,7 +109,7 @@ void *routine_sending_data(void *arg){
         if(fgets(message, 1024, stdin) == NULL){
             break;
         }
-        if (send(*socket, message, sizeof(message) - 1, 0) < 0)
+        if (send(*socket, message, strlen(message), 0) < 0)
         {
             fprintf(stderr, "Cannot send message: %s", strerror(errno));
             close(*socket);
@@ -123,11 +125,13 @@ void *routine_receiving_data(void *arg){
     char buffer[1024];
     while (1)
     {
-        if(recv(*socket, buffer, sizeof(buffer) - 1, 0) <= 0){
+     int n = recv(*socket, buffer, sizeof(buffer) - 1, 0);
+        if(n <= 0){
             fprintf(stderr, "Cannot receive message: %s", strerror(errno));
             close(*socket);
             exit(EXIT_FAILURE);
         }
+     buffer[n] = '\0';
         printf(BLEU"\n%s\n"RESET, buffer);
     }
 }
