@@ -89,8 +89,8 @@ void *routine_serveur(void *arg){
         exit(EXIT_FAILURE);
     }
     *socketB = accept(*socketA, (struct sockaddr*)&sockAddress, (socklen_t*)&length);
-    close(*socketA)
-    free(socketA)
+    close(*socketA);
+    free(socketA);
     if(*socketB == -1){
         fprintf(stderr, "Cannot accept connections: %s\n", strerror(errno));
         close(*socketA);
